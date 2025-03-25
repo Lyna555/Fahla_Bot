@@ -109,7 +109,7 @@ async def play_voice_chat(event):
 
     # check if the sender is replying on the wanted audio file
     if not event.reply_to_msg_id:
-        await event.reply("⚠️ يرجى الرد على الملف الصوتي الذي تريد تشغيله باستخدام /ابدا")
+        await event.reply("⚠️ يرجى الرد على الملف الصوتي الذي تريد تشغيله باستخدام /شغل")
         return
     
     # searching for the audio file
