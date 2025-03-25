@@ -1,0 +1,14 @@
+.env
+
+audios/
+
+__pycache__/
+*.pyc
+*.pyo
+
+session_name.session
+session_name.session-journal
+
+myenv/
+
+

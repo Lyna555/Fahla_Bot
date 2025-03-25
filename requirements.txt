@@ -1,0 +1,4 @@
+telethon
+pytgcalls
+python-dotenv
+asyncio
