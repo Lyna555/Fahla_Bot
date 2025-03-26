@@ -72,7 +72,41 @@ async def start_bot(event):
     - ⏸ `/توقف` لإيقاف التشغيل مؤقتًا.
     - ▶ `/اكمل` لاستئناف التشغيل.
     - ⛔ `/اغلق` لإيقاف البوت والخروج من المحادثة الصوتية.""")
+
+
+# Command to play a specific video file
+@client.on(events.NewMessage(pattern="/دعاء"))
+async def play_specific_video(event):
+    chat_id = event.chat_id
+
+    if chat_id not in active_groups:
+        await event.reply("⚠️ البوت غير مفعل في هذه المجموعة! استخدم `/ابدا` أولًا.")
+        return
+
+    if not await is_admin(event):
+        await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
+        return
+
+    # Define the specific video file path
+    file_path = "audio/kitab.mp4"
+
+    # Playing the video file
+    try:
+        await event.reply("📹 جارٍ تشغيل الفيديو المحدد...")
+
+        try:
+            await pytgcalls.start()
+            await pytgcalls.play(chat_id, file_path, stream_type="video")
+        except:
+            await pytgcalls.play(chat_id, file_path, stream_type="video")
+
+        await event.reply("🎥 تم تشغيل الفيديو بنجاح")
     
+    except Exception as e:
+        await event.reply("⚠️ يرجى فتح الغرفة الصوتية أولًا!")
+        print(f"Error: {e}")
+    
+# playing quran by Yassin El-Djazairi 
 @client.on(events.NewMessage(pattern="/قرآن"))
 async def play_youtube_playlist(event):
     chat_id = event.chat_id
@@ -107,6 +141,7 @@ async def play_youtube_playlist(event):
             'noplaylist': True,
             'quiet': True
         }
+    
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
             audio_url = info.get('url', None)
@@ -121,7 +156,7 @@ async def play_youtube_playlist(event):
                     
                 await asyncio.sleep(info.get('duration', 5))
             except Exception as e:
-                await event.reply(f"⚠️ خطأ أثناء التشغيل: {e}")
+                await event.reply(f"⚠️ يرجى التأكد من أن الغرفة مفتوحة")
 
 
 # saving the audio sended
@@ -136,7 +171,7 @@ async def save_audio(event):
 
     # Ensure the command is in reply to a message
     if not event.reply_to_msg_id:
-        await event.reply("⚠️ يرجى الرد على ملف صوتي لاستخدام الأمر `/save`")
+        await event.reply("⚠️ يرجى الرد على ملف صوتي لاستخدام الأمر `/حفظ`")
         return
 
     # Check if the user is an admin
@@ -212,7 +247,7 @@ async def play_voice_chat(event):
         await event.reply("🎶 تم تشغيل الملف الصوتي")
     
     except Exception as e:
-        await event.reply("⚠️ يرجى فتح الغرفة الصوتية أولًا!")
+        await event.reply("⚠️ يرجى التأكد من أن الغرفة مفتوحة")
         print(f"Error: {e}")
 
 # pause the audio file
