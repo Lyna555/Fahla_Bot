@@ -2,3 +2,5 @@ telethon
 pytgcalls
 python-dotenv
 asyncio
+yt_dlp
+pytube
