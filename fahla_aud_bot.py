@@ -205,7 +205,7 @@ async def save_audio(event):
     reply_msg = await event.get_reply_message()
 
     # Check if the replied message contains an audio file
-    if not reply_msg.file or not reply_msg.file.endswith((".mp4", ".mp3", ".ogg")):
+    if not reply_msg.file or not reply_msg.file.ext not in ("mp4", "mp3", "ogg"):
         await event.reply("⚠️ يجب الرد على ملف صوتي فقط!")
         return
 
@@ -242,7 +242,7 @@ async def play_voice_chat(event):
     reply_msg = await event.get_reply_message()
 
     # Check if the replied message contains an audio file
-    if not reply_msg.file or not reply_msg.file.endswith(((".mp4", ".mp3", ".ogg"))):
+    if not reply_msg.file or not reply_msg.file.ext not in ("mp4", "mp3", "ogg"):
         await event.reply("⚠️ يجب الرد على ملف صوتي فقط!")
         return
 
