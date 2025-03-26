@@ -67,18 +67,37 @@ async def start_bot(event):
     🔹 **كيف يعمل البوت؟**
     1️⃣ **تفعيل البوت**: عند إرسال `/ابدا`، يتم تشغيل البوت ويصبح جاهزًا للاستجابة للأوامر.
     2️⃣ **حفظ الملفات الصوتية**: عند إرسال الملف الصوتي، سيتم حفظه تلقائيًا (فقط من قبل المشرفين).
-    3️⃣ **تشغيل الصوت في المحادثة الصوتية**: قم بالرد على الملف الصوتي الذي أرسلته وأرسل `/شغل` لتشغيله.
+    3️⃣ **تشغيل الصوت في المحادثة الصوتية**: قم بالرد على الملف الصوتي الذي أرسلته وأرسل `/حفظ` لحفظه ثم `/شغل` لتشغيله.
     4️⃣ **التحكم في التشغيل**:
     - ⏸ `/توقف` لإيقاف التشغيل مؤقتًا.
     - ▶ `/اكمل` لاستئناف التشغيل.
-    - ⛔ `/اغلق` لإيقاف البوت والخروج من المحادثة الصوتية.""")
+    - ⛔ `/اغلق` لإيقاف البوت والخروج من المحادثة الصوتية.
+    5️⃣ **تعليمات إضافية**:
+    - `/القرآن` لتشغيل القرآن كاملا.
+    - `/الملك` لتشغيل سورة الملك.
+    - `/البقرة` لتشغيل سورة البقرة.
+    - `/دعاء` لتشغيل سورة دعاء من الكتاب والسنة.
+    - `/مستجاب` لتشغيل دعاء مستجاب.
+    - `/يوسف` لتشغيل سورة يوسف.
+    - `/اذكار`  دعاء الصباح والمسا.""")
 
 
-# Command to play a specific video file
-@client.on(events.NewMessage(pattern="/دعاء"))
+VIDEO_FILES = {
+    "/دعاء": "audios/kitab.mp4",
+    "/الملك": "audios/mulk.mp4",
+    "/البقرة": "audios/bakara.mp4",
+    "/مستجاب": "audios/mustajab.mp4",
+    "/يوسف": "audios/youssef.mp4",
+    "/اذكار": "audios/adkar.mp4"
+    
+}
+
+@client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجابّ|يوسف|اذكار)"))
 async def play_specific_video(event):
+    
     chat_id = event.chat_id
-
+    command = event.text.strip()
+    
     if chat_id not in active_groups:
         await event.reply("⚠️ البوت غير مفعل في هذه المجموعة! استخدم `/ابدا` أولًا.")
         return
@@ -86,29 +105,30 @@ async def play_specific_video(event):
     if not await is_admin(event):
         await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
         return
-
-    # Define the specific video file path
-    file_path = "audio/kitab.mp4"
-
-    # Playing the video file
+    
+    file_path = VIDEO_FILES.get(command)
+    if not file_path:
+        await event.reply("⚠️ لم يتم العثور على الفيديو المطلوب!")
+        return
+    
     try:
-        await event.reply("📹 جارٍ تشغيل الفيديو المحدد...")
-
+        await event.reply("📹 جارٍ تشغيل الفيديو...")
         try:
             await pytgcalls.start()
-            await pytgcalls.play(chat_id, file_path, stream_type="video")
+            await pytgcalls.play(chat_id, file_path)
         except:
-            await pytgcalls.play(chat_id, file_path, stream_type="video")
-
+            await pytgcalls.play(chat_id, file_path)
+            
         await event.reply("🎥 تم تشغيل الفيديو بنجاح")
-    
     except Exception as e:
         await event.reply("⚠️ يرجى فتح الغرفة الصوتية أولًا!")
         print(f"Error: {e}")
+
     
 # playing quran by Yassin El-Djazairi 
 @client.on(events.NewMessage(pattern="/قرآن"))
 async def play_youtube_playlist(event):
+    
     chat_id = event.chat_id
 
     if chat_id not in active_groups:
@@ -185,7 +205,7 @@ async def save_audio(event):
     reply_msg = await event.get_reply_message()
 
     # Check if the replied message contains an audio file
-    if not reply_msg.file or not reply_msg.file.mime_type.startswith('audio'):
+    if not reply_msg.file or not reply_msg.file.endswith((".mp4", ".mp3", ".ogg")):
         await event.reply("⚠️ يجب الرد على ملف صوتي فقط!")
         return
 
@@ -222,7 +242,7 @@ async def play_voice_chat(event):
     reply_msg = await event.get_reply_message()
 
     # Check if the replied message contains an audio file
-    if not reply_msg.file or not reply_msg.file.mime_type.startswith('audio'):
+    if not reply_msg.file or not reply_msg.file.endswith(((".mp4", ".mp3", ".ogg"))):
         await event.reply("⚠️ يجب الرد على ملف صوتي فقط!")
         return
 
