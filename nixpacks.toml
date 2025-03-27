@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ["expat"]
+nixPkgs = ["python3","expat"]
