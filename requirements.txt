@@ -1,4 +1,6 @@
 telethon
-pytgcalls
+py-tgcalls -U
 python-dotenv
 asyncio
+yt_dlp
+pytube
