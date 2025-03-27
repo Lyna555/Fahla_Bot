@@ -1,5 +1,5 @@
 telethon
-py-tgcalls -U
+py-tgcalls
 python-dotenv
 asyncio
 yt_dlp
