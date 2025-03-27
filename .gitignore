@@ -1,7 +1,5 @@
 .env
 
-audios/
-
 __pycache__/
 *.pyc
 *.pyo
