@@ -42,6 +42,7 @@ async def is_admin(event):
     
     return any(admin.id == sender_id for admin in admins)
 
+# get youtube playlist videos
 async def get_playlist_videos(playlist_url):
     try:
         playlist = Playlist(playlist_url)
@@ -73,13 +74,13 @@ async def start_bot(event):
     - ▶ `/اكمل` لاستئناف التشغيل.
     - ⛔ `/اغلق` لإيقاف البوت والخروج من المحادثة الصوتية.
     5️⃣ **تعليمات إضافية**:
-    - `/القرآن` لتشغيل القرآن كاملا.
+    - `/قرآن` لتشغيل القرآن كاملا.
     - `/الملك` لتشغيل سورة الملك.
     - `/البقرة` لتشغيل سورة البقرة.
     - `/دعاء` لتشغيل سورة دعاء من الكتاب والسنة.
     - `/مستجاب` لتشغيل دعاء مستجاب.
     - `/يوسف` لتشغيل سورة يوسف.
-    - `/اذكار`  دعاء الصباح والمسا.""")
+    - `/اذكار`  دعاء الصباح والمساء.""")
 
 
 VIDEO_FILES = {
@@ -92,21 +93,28 @@ VIDEO_FILES = {
     
 }
 
+# playing existed videos
 @client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجابّ|يوسف|اذكار)"))
 async def play_specific_video(event):
     
     chat_id = event.chat_id
+    
+    # get command
     command = event.text.strip()
     
+    # Check if the user bot is active in this group
     if chat_id not in active_groups:
         await event.reply("⚠️ البوت غير مفعل في هذه المجموعة! استخدم `/ابدا` أولًا.")
         return
-
+    
+    # Check if the user is an admin
     if not await is_admin(event):
         await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
         return
     
     file_path = VIDEO_FILES.get(command)
+    
+    # check if the video exists
     if not file_path:
         await event.reply("⚠️ لم يتم العثور على الفيديو المطلوب!")
         return
@@ -130,11 +138,13 @@ async def play_specific_video(event):
 async def play_youtube_playlist(event):
     
     chat_id = event.chat_id
-
+    
+    # Check if the user bot is active in this group
     if chat_id not in active_groups:
         await event.reply("⚠️ البوت غير مفعل في هذه المجموعة! استخدم `/ابدا` أولًا.")
         return
-
+    
+    # Check if the user is an admin
     if not await is_admin(event):
         await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
         return
@@ -165,7 +175,8 @@ async def play_youtube_playlist(event):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
             audio_url = info.get('url', None)
-
+            
+        # playing video
         if audio_url:
             try:
                 try:
