@@ -1,1 +1,1 @@
-python3 fahla_aud_bot.py
+web: python3 fahla_aud_bot.py
