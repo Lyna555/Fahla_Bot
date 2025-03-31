@@ -77,10 +77,11 @@ async def start_bot(event):
     - `/قرآن` لتشغيل القرآن كاملا.
     - `/الملك` لتشغيل سورة الملك.
     - `/البقرة` لتشغيل سورة البقرة.
-    - `/دعاء` لتشغيل سورة دعاء من الكتاب والسنة.
+    - `/دعاء` لتشغيل دعاء من الكتاب والسنة.
     - `/مستجاب` لتشغيل دعاء مستجاب.
     - `/يوسف` لتشغيل سورة يوسف.
-    - `/اذكار`  دعاء الصباح والمساء.""")
+    - `/اذكار`  لتشغيل دعاء الصباح والمساء.
+    - `/تكبيرات`  لتشغيل تكبيرات العيد.""")
 
 
 VIDEO_FILES = {
@@ -89,12 +90,13 @@ VIDEO_FILES = {
     "/البقرة": "audios/bakara.mp4",
     "/مستجاب": "audios/mustajab.mp4",
     "/يوسف": "audios/youssef.mp4",
-    "/اذكار": "audios/adkar.mp4"
+    "/اذكار": "audios/adkar.mp4",
+    "/تكبيرات" : "audios/takbirat.ogg"
     
 }
 
 # playing existed videos
-@client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجاب|يوسف|اذكار)"))
+@client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجاب|يوسف|اذكار|تكبيرات)"))
 async def play_specific_video(event):
     
     chat_id = event.chat_id
@@ -132,7 +134,6 @@ async def play_specific_video(event):
         await event.reply("⚠️ يرجى فتح الغرفة الصوتية أولًا!")
         print(f"Error: {e}")
 
-    
 # playing quran by Yassin El-Djazairi 
 @client.on(events.NewMessage(pattern="/قرآن"))
 async def play_youtube_playlist(event):
