@@ -1,6 +1,7 @@
 import asyncio
 import os
 import uuid
+import yt_dlp
 from telethon import TelegramClient, events
 from telethon.tl.types import ChannelParticipantsAdmins
 from pytgcalls import PyTgCalls
