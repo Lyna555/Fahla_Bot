@@ -1,7 +1,6 @@
 import asyncio
 import os
 import uuid
-import yt_dlp
 from telethon import TelegramClient, events
 from telethon.tl.types import ChannelParticipantsAdmins
 from pytgcalls import PyTgCalls
@@ -380,10 +379,6 @@ async def stop_bot(event):
 
 async def main():
     await client.connect()
-    
-    # sign in the user
-    if not await client.is_user_authorized():
-        await client.sign_in(phone=PHONE_NUMBER, code=CLIENT_CODE,  phone_code_hash=CLIENT_CODE.phone_code_hash)
     
     # running the bot
     print("User bot is running...")
