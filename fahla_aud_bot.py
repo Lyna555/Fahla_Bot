@@ -11,7 +11,7 @@ from pytube import Playlist
 load_dotenv()
 
 # Telegram app information
-API_ID = int(os.getenv("API_ID"))
+API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 
 # Telegram userbot information
