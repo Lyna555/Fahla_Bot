@@ -91,12 +91,11 @@ VIDEO_FILES = {
     "/مستجاب": "audios/mustajab.mp4",
     "/يوسف": "audios/youssef.mp4",
     "/اذكار": "audios/adkar.mp4",
-    "/تكبيرات" : "audios/takbirat.ogg"
     
 }
 
 # playing existed videos
-@client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجاب|يوسف|اذكار|تكبيرات)"))
+@client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجاب|يوسف|اذكار)"))
 async def play_specific_video(event):
     
     chat_id = event.chat_id
@@ -133,6 +132,43 @@ async def play_specific_video(event):
     except Exception as e:
         await event.reply("⚠️ يرجى فتح الغرفة الصوتية أولًا!")
         print(f"Error: {e}")
+
+# playing eid takbirat
+@client.on(events.NewMessage(pattern="/تكبيرات"))
+async def play_youtube_playlist(event):
+    
+    chat_id = event.chat_id
+    
+    # Check if the user bot is active in this group
+    if chat_id not in active_groups:
+        await event.reply("⚠️ البوت غير مفعل في هذه المجموعة! استخدم `/ابدا` أولًا.")
+        return
+    
+    # Check if the user is an admin
+    if not await is_admin(event):
+        await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
+        return
+
+    video_url = "https://www.youtube.com/watch?v=E3fEhIv1_yw"
+    
+    if not video_url:
+        await event.reply("❌ لم يتم العثور على الفيديو")
+        return
+
+    await event.reply(f"🔄 جاري تشغيل {video_url}...")
+    
+    await event.reply(f"🎶 تشغيل: {video_url}")
+            
+    # playing video
+    if video_url:
+        try:
+            try:
+                await pytgcalls.start()
+                await pytgcalls.play(chat_id, video_url)
+            except:
+                await pytgcalls.play(chat_id, video_url)
+        except Exception as e:
+            await event.reply(f"⚠️ يرجى التأكد من أن الغرفة مفتوحة")
 
 # playing quran by Yassin El-Djazairi 
 @client.on(events.NewMessage(pattern="/قرآن"))
