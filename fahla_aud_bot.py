@@ -382,9 +382,7 @@ async def main():
     await client.connect()
     
     # sign in the user
-    if not await client.is_user_authorized():
-        await client.send_code_request(PHONE_NUMBER)
-        await client.sign_in(phone=PHONE_NUMBER, code=CLIENT_CODE)
+    await client.sign_in(phone=PHONE_NUMBER, code=CLIENT_CODE)
     
     # running the bot
     print("User bot is running...")
