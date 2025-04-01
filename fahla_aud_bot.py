@@ -383,6 +383,10 @@ async def stop_bot(event):
 async def main():
     await client.connect()
     
+    if not await client.is_user_authorized():
+        await client.send_code_request(PHONE_NUMBER)
+        await client.sign_in(PHONE_NUMBER, CLIENT_CODE)
+    
     # running the bot
     print("User bot is running...")
     await client.run_until_disconnected()
