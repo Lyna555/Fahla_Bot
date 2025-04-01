@@ -18,7 +18,7 @@ API_HASH = os.getenv("API_HASH")
 PHONE_NUMBER = os.getenv("PHONE_NUMBER")
 CLIENT_CODE = os.getenv("CLIENT_CODE")
 
-client = TelegramClient("session_name", int(API_ID), API_HASH)
+client = TelegramClient("session_name", API_ID, API_HASH)
 
 pytgcalls = PyTgCalls(client)
 
