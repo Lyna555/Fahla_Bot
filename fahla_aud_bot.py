@@ -167,6 +167,7 @@ async def play_youtube_playlist(event):
             except:
                 await pytgcalls.play(chat_id, video_url)
         except Exception as e:
+            print(f"{e}")
             await event.reply(f"⚠️ يرجى التأكد من أن الغرفة مفتوحة")
 
 # playing quran by Yassin El-Djazairi 
@@ -223,6 +224,7 @@ async def play_youtube_playlist(event):
                     
                 await asyncio.sleep(info.get('duration', 5))
             except Exception as e:
+                print(f"{e}")
                 await event.reply(f"⚠️ يرجى التأكد من أن الغرفة مفتوحة")
 
 
