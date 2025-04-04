@@ -66,9 +66,9 @@ async def start_bot(event):
     await event.reply("""✅ البوت مفعل الآن ويمكنك استخدام الأوامر!
 
     🔹 **كيف يعمل البوت؟**
-    1️⃣ **تفعيل البوت**: عند إرسال `/ابدا`، يتم تشغيل البوت ويصبح جاهزًا للاستجابة للأوامر.
-    2️⃣ **حفظ الملفات الصوتية**: عند إرسال الملف الصوتي، سيتم حفظه تلقائيًا (فقط من قبل المشرفين).
-    3️⃣ **تشغيل الصوت في المحادثة الصوتية**: قم بالرد على الملف الصوتي الذي أرسلته وأرسل `/حفظ` لحفظه ثم `/شغل` لتشغيله.
+    1️⃣ **تفعيل البوت**: عند إرسال `/ابدا`، يتم تفعيل البوت ويصبح جاهزًا للاستجابة للأوامر.
+    2️⃣ **من يمكنه استخدام البوت؟**: المشرفون ومالك القناة فقط من يمكنهم تفعيل البوت واستخدامه.
+    3️⃣ **تشغيل الصوت في المحادثة الصوتية**: قم بالرد على الملف الصوتي الذي أرسلته وأرسل `/شغل` لتشغيله.
     4️⃣ **التحكم في التشغيل**:
     - ⏸ `/توقف` لإيقاف التشغيل مؤقتًا.
     - ▶ `/اكمل` لاستئناف التشغيل.
@@ -91,7 +91,6 @@ VIDEO_FILES = {
     "/مستجاب": "audios/mustajab.mp4",
     "/يوسف": "audios/youssef.mp4",
     "/اذكار": "audios/adkar.mp4",
-    
 }
 
 # playing existed videos
@@ -227,48 +226,6 @@ async def play_youtube_playlist(event):
             except Exception as e:
                 print(f"{e}")
                 await event.reply(f"⚠️ يرجى التأكد من أن الغرفة مفتوحة")
-
-
-# saving the audio sended
-@client.on(events.NewMessage(pattern="/حفظ"))
-async def save_audio(event):
-    
-    chat_id = event.chat_id
-
-    # Check if the user bot is active in this group
-    if chat_id not in active_groups:
-        return
-
-    # Ensure the command is in reply to a message
-    if not event.reply_to_msg_id:
-        await event.reply("⚠️ يرجى الرد على ملف صوتي لاستخدام الأمر `/حفظ`")
-        return
-
-    # Check if the user is an admin
-    if not await is_admin(event):
-        await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
-        return
-
-    await event.reply("🔄 جار حفظ الملف ...")
-
-    # Get the replied message
-    reply_msg = await event.get_reply_message()
-
-    # Check if the replied message contains an audio file
-    if not reply_msg.file or not reply_msg.file.ext not in ("mp4", "mp3", "ogg"):
-        await event.reply("⚠️ يجب الرد على ملف صوتي فقط!")
-        return
-
-    # Extract filename if available; otherwise, generate one
-    filename = reply_msg.file.name if reply_msg.file.name else f"voice_{uuid.uuid4().hex}.ogg"
-    file_path = os.path.join(SAVE_FOLDER, filename)
-
-    # Save the audio file
-    await reply_msg.download_media(file_path)
-    uploaded_files[chat_id] = filename  
-
-    await event.reply(f"✅ تم حفظ الملف بنجاح: `{filename}`")
-
 
 # join the chat voice and play the replied audio file
 @client.on(events.NewMessage(pattern="/شغل"))
