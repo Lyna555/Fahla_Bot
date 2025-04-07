@@ -258,9 +258,13 @@ async def pause_voice_chat(event):
         return
 
     # stoping the audio
-    if event.is_group:
-        await event.reply("⏸ توقف")
-        await pytgcalls.pause(chat_id)
+    try:
+        if event.is_group:
+            await event.reply("⏸ توقف")
+            await pytgcalls.pause(chat_id)
+    except Exception as e:
+        await event.reply("⚠️ يرجى التأكد من أن البوت في الغرفة ")
+        print(f"Error: {e}")
 
 # resume the audio file
 @client.on(events.NewMessage(pattern="/اكمل"))
@@ -277,9 +281,13 @@ async def resume_voice_chat(event):
         return
 
     # resuming the audio
-    if event.is_group:
-        await event.reply("▶ أكمل")
-        await pytgcalls.resume(chat_id)
+    try:
+        if event.is_group:
+            await event.reply("▶ أكمل")
+            await pytgcalls.resume(chat_id)
+    except Exception as e:
+        await event.reply("⚠️ يرجى التأكد من أن البوت في الغرفة ")
+        print(f"Error: {e}")
 
 # stop the bot
 @client.on(events.NewMessage(pattern="/اغلق"))
