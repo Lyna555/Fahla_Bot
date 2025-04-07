@@ -52,7 +52,7 @@ async def get_playlist_videos(playlist_url):
         print(f"Error fetching playlist: {e}")
         return []
 
-# get youtube video url
+# get youtube video urlz
 def get_audio_stream_url(youtube_url):
     ydl_opts = {
         'format': 'bestaudio/best',
