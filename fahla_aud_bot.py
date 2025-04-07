@@ -75,26 +75,27 @@ async def start_bot(event):
     - ⛔ `/اغلق` لإيقاف البوت والخروج من المحادثة الصوتية.
     5️⃣ **تعليمات إضافية**:
     - `/قرآن` لتشغيل القرآن كاملا.
-    - `/الملك` لتشغيل سورة الملك.
     - `/البقرة` لتشغيل سورة البقرة.
+    - `/يوسف` لتشغيل سورة يوسف.
+    - `/الكهف` لتشغيل سورة الكهف.
+    - `/الملك` لتشغيل سورة الملك.
     - `/دعاء` لتشغيل دعاء من الكتاب والسنة.
     - `/مستجاب` لتشغيل دعاء مستجاب.
-    - `/يوسف` لتشغيل سورة يوسف.
-    - `/اذكار`  لتشغيل دعاء الصباح والمساء.
-    - `/تكبيرات`  لتشغيل تكبيرات العيد.""")
+    - `/اذكار`  لتشغيل دعاء الصباح والمساء.""")
 
 
-VIDEO_FILES = {
-    "/دعاء": "audios/kitab.mp4",
-    "/الملك": "audios/mulk.mp4",
-    "/البقرة": "audios/bakara.mp4",
-    "/مستجاب": "audios/mustajab.mp4",
-    "/يوسف": "audios/youssef.mp4",
-    "/اذكار": "audios/adkar.mp4",
+VIDEO_URLS = {
+    "/البقرة": "https://www.youtube.com/watch?v=k9NDKEw5slo",
+    "/يوسف": "https://www.youtube.com/watch?v=pENMnDp_XLc",
+    "/الكهف": "https://www.youtube.com/watch?v=DrTaNX51xF0",
+    "/الملك": "https://www.youtube.com/watch?v=1SOzkCdDrz0",
+    "/دعاء": "https://www.youtube.com/watch?v=2hEntR9k5pE",
+    "/مستجاب": "https://www.youtube.com/watch?v=MHHkxeOJxQE",
+    "/اذكار": "https://www.youtube.com/watch?v=xrZALrmabb0",
 }
 
 # playing existed videos
-@client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجاب|يوسف|اذكار)"))
+@client.on(events.NewMessage(pattern=r"/(دعاء|الملك|البقرة|مستجاب|يوسف|اذكار|الكهف)"))
 async def play_specific_video(event):
     
     chat_id = event.chat_id
@@ -112,63 +113,28 @@ async def play_specific_video(event):
         await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
         return
     
-    file_path = VIDEO_FILES.get(command)
+    video_url = VIDEO_URLS.get(command)
     
     # check if the video exists
-    if not file_path:
-        await event.reply("⚠️ لم يتم العثور على الفيديو المطلوب!")
-        return
-    
-    try:
-        await event.reply("📹 جارٍ تشغيل الفيديو...")
-        try:
-            await pytgcalls.start()
-            await pytgcalls.play(chat_id, file_path)
-        except:
-            await pytgcalls.play(chat_id, file_path)
-            
-        await event.reply("🎥 تم تشغيل الفيديو بنجاح")
-    except Exception as e:
-        await event.reply("⚠️ يرجى فتح الغرفة الصوتية أولًا!")
-        print(f"Error: {e}")
-
-# playing eid takbirat
-@client.on(events.NewMessage(pattern="/تكبيرات"))
-async def play_youtube_playlist(event):
-    
-    chat_id = event.chat_id
-    
-    # Check if the user bot is active in this group
-    if chat_id not in active_groups:
-        await event.reply("⚠️ البوت غير مفعل في هذه المجموعة! استخدم `/ابدا` أولًا.")
-        return
-    
-    # Check if the user is an admin
-    if not await is_admin(event):
-        await event.reply("🚫 فقط المشرفين يمكنهم استخدام هذا الأمر!")
-        return
-
-    video_url = "https://www.youtube.com/watch?v=E3fEhIv1_yw"
-    
     if not video_url:
         await event.reply("❌ لم يتم العثور على الفيديو")
         return
 
     await event.reply(f"🔄 جاري تشغيل {video_url}...")
     
-    await event.reply(f"🎶 تشغيل: {video_url}")
-            
-    # playing video
-    if video_url:
+    try:
+        await event.reply(f"🎶 تشغيل: {video_url}")
         try:
-            try:
-                await pytgcalls.start()
-                await pytgcalls.play(chat_id, video_url)
-            except:
-                await pytgcalls.play(chat_id, video_url)
-        except Exception as e:
-            print(f"{e}")
-            await event.reply(f"⚠️ يرجى التأكد من أن الغرفة مفتوحة")
+            await pytgcalls.start()
+            await pytgcalls.play(chat_id, video_url)
+        except:
+            await pytgcalls.play(chat_id, video_url)
+            
+        await event.reply("🎥 تم تشغيل الفيديو بنجاح")
+        
+    except Exception as e:
+        await event.reply("⚠️ يرجى التأكد من أن الغرفة مفتوحة")
+        print(f"Error: {e}")
 
 # playing quran by Yassin El-Djazairi 
 @client.on(events.NewMessage(pattern="/قرآن"))
