@@ -4,3 +4,4 @@ python-dotenv
 asyncio
 yt_dlp
 pytube
+ffprobe
