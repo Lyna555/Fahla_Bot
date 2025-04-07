@@ -3,6 +3,7 @@ import os
 import uuid
 import yt_dlp
 from telethon import TelegramClient, events
+from telethon.sessions import StringSession
 from telethon.tl.types import ChannelParticipantsAdmins
 from pytgcalls import PyTgCalls
 from dotenv import load_dotenv
@@ -15,10 +16,9 @@ API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 
 # Telegram userbot information
-PHONE_NUMBER = os.getenv("PHONE_NUMBER")
-CLIENT_CODE = os.getenv("CLIENT_CODE")
+SESSION_STRING = os.getenv("SESSION_STRING")
 
-client = TelegramClient("session_name", API_ID, API_HASH)
+client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 
 pytgcalls = PyTgCalls(client)
 
@@ -51,6 +51,20 @@ async def get_playlist_videos(playlist_url):
     except Exception as e:
         print(f"Error fetching playlist: {e}")
         return []
+
+# get youtube video url
+def get_audio_stream_url(youtube_url):
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'quiet': True,
+        'no_warnings': True,
+        'skip_download': True,
+        'extract_flat': False,
+    }
+    
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(youtube_url, download=False)
+        return info_dict['url']
 
 # start the bot
 @client.on(events.NewMessage(pattern="/ابدا"))
@@ -120,21 +134,29 @@ async def play_specific_video(event):
         await event.reply("❌ لم يتم العثور على الفيديو")
         return
 
+    try:
+        youtube_url = get_audio_stream_url(video_url)
+    except Exception as e:
+        await event.reply("⚠️ خطأ في تحميل الصوت من يوتيوب")
+        print(f"yt-dlp error: {e}")
+        return
+
     await event.reply(f"🔄 جاري تشغيل {video_url}...")
     
     try:
         await event.reply(f"🎶 تشغيل: {video_url}")
         try:
             await pytgcalls.start()
-            await pytgcalls.play(chat_id, video_url)
+            await pytgcalls.play(chat_id, youtube_url)
         except:
-            await pytgcalls.play(chat_id, video_url)
+            await pytgcalls.play(chat_id, youtube_url)
             
         await event.reply("🎥 تم تشغيل الفيديو بنجاح")
         
     except Exception as e:
         await event.reply("⚠️ يرجى التأكد من أن الغرفة مفتوحة")
         print(f"Error: {e}")
+        return
 
 # playing quran by Yassin El-Djazairi 
 @client.on(events.NewMessage(pattern="/قرآن"))
@@ -171,6 +193,7 @@ async def play_youtube_playlist(event):
         ydl_opts = {
             'format': 'bestaudio/best',
             'extract_audio': True,
+            'no_warnings': True,
             'noplaylist': True,
             'quiet': True
         }
@@ -190,8 +213,9 @@ async def play_youtube_playlist(event):
                     
                 await asyncio.sleep(info.get('duration', 5))
             except Exception as e:
-                print(f"{e}")
                 await event.reply(f"⚠️ يرجى التأكد من أن الغرفة مفتوحة")
+                print(f"ERROR:{e}")
+                return
 
 # join the chat voice and play the replied audio file
 @client.on(events.NewMessage(pattern="/شغل"))
@@ -242,6 +266,7 @@ async def play_voice_chat(event):
     except Exception as e:
         await event.reply("⚠️ يرجى التأكد من أن الغرفة مفتوحة")
         print(f"Error: {e}")
+        return
 
 # pause the audio file
 @client.on(events.NewMessage(pattern="/توقف"))
@@ -265,6 +290,7 @@ async def pause_voice_chat(event):
     except Exception as e:
         await event.reply("⚠️ يرجى التأكد من أن البوت في الغرفة ")
         print(f"Error: {e}")
+        return
 
 # resume the audio file
 @client.on(events.NewMessage(pattern="/اكمل"))
@@ -288,6 +314,7 @@ async def resume_voice_chat(event):
     except Exception as e:
         await event.reply("⚠️ يرجى التأكد من أن البوت في الغرفة ")
         print(f"Error: {e}")
+        return
 
 # stop the bot
 @client.on(events.NewMessage(pattern="/اغلق"))
@@ -309,14 +336,11 @@ async def stop_bot(event):
         await pytgcalls.leave_call(chat_id)
         
     await event.reply("⛔ البوت متوقف الآن!")
+    return
 
 
 async def main():
     await client.connect()
-    
-    if not await client.is_user_authorized():
-        await client.send_code_request(PHONE_NUMBER)
-        await client.sign_in(PHONE_NUMBER, CLIENT_CODE)
     
     # running the bot
     print("User bot is running...")
